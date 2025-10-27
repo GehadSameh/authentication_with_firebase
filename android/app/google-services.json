@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "891700595705",
+    "project_id": "easy-ba3db",
+    "storage_bucket": "easy-ba3db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891700595705:android:9eec3fa5cde1366a1bcb28",
+        "android_client_info": {
+          "package_name": "com.example.auth_with_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCexO1sgKOoam06542sXOhfK3ZPrnUi4zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
