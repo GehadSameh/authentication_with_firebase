@@ -1,6 +1,8 @@
 
 
 import 'package:auth_with_firebase/cubit/user_state.dart';
+import 'package:auth_with_firebase/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,11 +34,17 @@ class UserCubit extends Cubit<UserState> {
 
   signUp( )async{
     emit(SignUpLoadingState());
-    
+    UserModel user=UserModel(
+      name: signUpName.text, 
+      phone: signUpPhoneNumber.text, 
+      email: signUpEmail.text.trim(), 
+      password: signUpPassword.text.trim(),
+       confirmPassword: confirmPassword.text, 
+       profilePic: 'profilePic');
     try{
       // signUP
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: signUpEmail.text.trim(), password: signUpPassword.text);
-      
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password:user.password);
+      await FirebaseFirestore.instance.collection('users').add(toMap(user));
       emit(SignUpSucessState());
     }catch(e){
       emit(SignUpfailureState(errorMessage: e.toString()));

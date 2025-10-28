@@ -18,7 +18,14 @@ class SignUpScreen extends StatelessWidget {
     return SafeArea(
       child: BlocConsumer<UserCubit,UserState>(
         
-        listener: (BuildContext context, state) {  },
+        listener: (BuildContext context, state) { 
+          if(state is SignUpSucessState){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('sucess')));
+          }
+           else if  (state is SignUpfailureState){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          }
+         },
         builder: (BuildContext context, state) {  
         return Scaffold(
           backgroundColor: const Color(0xffEEF1F3),
@@ -76,7 +83,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 22),
                   //!Sign Up Button
-                  CustomFormButton(
+                 state is SignUpLoadingState? CircularProgressIndicator() :CustomFormButton(
                     innerText: 'Signup',
                     onPressed: () {
                       context.read<UserCubit>().signUp();
