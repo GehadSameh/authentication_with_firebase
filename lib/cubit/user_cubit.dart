@@ -1,11 +1,14 @@
 
 
+import 'dart:io';
+
 import 'package:auth_with_firebase/cubit/user_state.dart';
 import 'package:auth_with_firebase/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserCubit extends Cubit<UserState> {
   UserCubit() : super(UserInitial());
@@ -18,7 +21,7 @@ class UserCubit extends Cubit<UserState> {
   //Sign Up Form key
   GlobalKey<FormState> signUpFormKey = GlobalKey();
   //Profile Pic
-  String? profilePic;
+  File? profilePic;
   //Sign up name
   TextEditingController signUpName = TextEditingController();
   //Sign up phone number
@@ -31,6 +34,14 @@ class UserCubit extends Cubit<UserState> {
   TextEditingController confirmPassword = TextEditingController();
 
 
+pickImage()async{
+  final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+  if(pickedImage!=null){
+    profilePic=File(pickedImage.path);
+    emit(PickedImageState());
+  }
+
+}
 
   signUp( )async{
     emit(SignUpLoadingState());
