@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserCubit extends Cubit<UserState> {
   UserCubit() : super(UserInitial());
@@ -21,7 +22,7 @@ class UserCubit extends Cubit<UserState> {
   //Sign Up Form key
   GlobalKey<FormState> signUpFormKey = GlobalKey();
   //Profile Pic
-  File? profilePic;
+  File? profilePicPath;
   //Sign up name
   TextEditingController signUpName = TextEditingController();
   //Sign up phone number
@@ -32,15 +33,37 @@ class UserCubit extends Cubit<UserState> {
   TextEditingController signUpPassword = TextEditingController();
   //Sign up confirm password
   TextEditingController confirmPassword = TextEditingController();
-
-
+String? imageUrl;
+final supabase = Supabase.instance.client.storage;
 pickImage()async{
   final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
   if(pickedImage!=null){
-    profilePic=File(pickedImage.path);
+    profilePicPath=File(pickedImage.path);
     emit(PickedImageState());
   }
 
+}
+
+uploadImage()async{
+  try{
+    if (profilePicPath == null) {
+   
+    return;
+  }
+   const bucketName = 'store_profile_pic';
+  final String filePath = 'images/${DateTime.now().toIso8601String()}.jpg';
+  await supabase.from(bucketName).upload(filePath, profilePicPath!);
+  final publicUrl = supabase.from(bucketName).getPublicUrl(filePath);
+
+      imageUrl = publicUrl;
+
+      emit(UploadImageState(imageUrl: imageUrl!));
+          
+  }catch(e){
+    emit(SignUpfailureState(errorMessage: e.toString()));
+  }
+
+  
 }
 
   signUp( )async{
@@ -51,7 +74,7 @@ pickImage()async{
       email: signUpEmail.text.trim(), 
       password: signUpPassword.text.trim(),
        confirmPassword: confirmPassword.text, 
-       profilePic: 'profilePic');
+       profilePic:imageUrl!);
     try{
       // signUP
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password:user.password);

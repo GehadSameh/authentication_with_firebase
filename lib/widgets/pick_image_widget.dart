@@ -18,8 +18,8 @@ class PickImageWidget extends StatelessWidget {
         height: 130,
         child: CircleAvatar(
           backgroundColor: Colors.grey.shade200,
-          backgroundImage: cubit.profilePic!=null?
-          FileImage(cubit.profilePic!):
+          backgroundImage: cubit.profilePicPath!=null?
+          FileImage(cubit.profilePicPath!):
            AssetImage("assets/images/avatar.png"),
           child: Stack(
             children: [
@@ -28,7 +28,8 @@ class PickImageWidget extends StatelessWidget {
                 right: 5,
                 child: GestureDetector(
                   onTap: () async {
-                   cubit.pickImage();
+                 await  cubit.pickImage();
+                 await  cubit.uploadImage();
                   },
                   child: Container(
                     height: 50,
