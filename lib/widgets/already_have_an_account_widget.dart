@@ -1,4 +1,5 @@
 
+import 'package:auth_with_firebase/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 
 class AlreadyHaveAnAccountWidget extends StatelessWidget {
@@ -21,7 +22,7 @@ class AlreadyHaveAnAccountWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold),
           ),
           GestureDetector(
-            onTap: () => {Navigator.pop(context)},
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen())),
             child: const Text(
               'Log-in',
               style: TextStyle(

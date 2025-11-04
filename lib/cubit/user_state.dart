@@ -16,3 +16,10 @@ class SignUpfailureState extends UserState {
   SignUpfailureState({required this.errorMessage});
 }
 class SignUpLoadingState extends UserState {}
+final class SignInSuccessState extends UserState{}
+final class SignInLoadingState extends UserState{}
+final class SignInfailureState extends UserState {
+  final String errorMessage;
+
+  SignInfailureState({required this.errorMessage});
+}

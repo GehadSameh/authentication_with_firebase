@@ -1,5 +1,6 @@
 import 'package:auth_with_firebase/cubit/user_cubit.dart';
 import 'package:auth_with_firebase/cubit/user_state.dart';
+import 'package:auth_with_firebase/screens/profile_screen.dart';
 import 'package:auth_with_firebase/widgets/already_have_an_account_widget.dart';
 import 'package:auth_with_firebase/widgets/custom_form_button.dart';
 import 'package:auth_with_firebase/widgets/custom_input_field.dart';
@@ -15,6 +16,7 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cubit=context.read<UserCubit>();
     return SafeArea(
       child: BlocConsumer<UserCubit,UserState>(
         
@@ -85,8 +87,9 @@ class SignUpScreen extends StatelessWidget {
                   //!Sign Up Button
                  state is SignUpLoadingState? CircularProgressIndicator() :CustomFormButton(
                     innerText: 'Signup',
-                    onPressed: () {
-                      context.read<UserCubit>().signUp();
+                    onPressed: () async{
+                   await   context.read<UserCubit>().signUp();
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));
                     },
                   ),
                   const SizedBox(height: 18),
