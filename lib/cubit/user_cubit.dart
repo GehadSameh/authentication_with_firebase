@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserCubit extends Cubit<UserState> {
@@ -36,7 +35,7 @@ class UserCubit extends Cubit<UserState> {
   TextEditingController confirmPassword = TextEditingController();
 String? imageUrl;
 UserModel ?data;
- String? id;
+ String? uid;
 final supabase = Supabase.instance.client.storage;
 final firebase=FirebaseAuth.instance;
 pickImage()async{
@@ -49,6 +48,7 @@ pickImage()async{
 }
 
 uploadImage()async{
+  emit(SignUpLoadingState());
   try{
     if (profilePicPath == null) {
    
@@ -82,11 +82,11 @@ uploadImage()async{
     try{
       // signUP
      UserCredential userCred= await firebase.createUserWithEmailAndPassword(email: user.email, password:user.password);
-     String uid = userCred.user!.uid;
+     uid = userCred.user!.uid;
 
       await FirebaseFirestore.instance.collection('users').doc(uid)
   .set(toMap(user));
-;
+  userData(uid!);
       emit(SignUpSucessState());
     }catch(e){
       emit(SignUpfailureState(errorMessage: e.toString()));
@@ -102,21 +102,28 @@ uploadImage()async{
       password: signInPassword.text.trim(),
     );
 
-    String userid = respons.user!.uid;
+    String uid = respons.user!.uid;
     final doc = await FirebaseFirestore.instance
         .collection('users')
-        .doc(userid)
+        .doc(uid)
         .get();
-
-    if (doc.exists && doc.data() != null) {
-      data = UserModel.fromjson(doc.data()!);
-      emit(SignInSuccessState());
-    } else {
-      emit(SignInfailureState(errorMessage: 'User data not found in Firestore.'));
-    }
+userData(uid);
+emit(SignInSuccessState());
+  
   } catch (e) {
     emit(SignInfailureState(errorMessage: e.toString()));
   }
+}
+
+ userData(String uid)async{
+  final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    if (doc.exists && doc.data() != null) {
+      data = UserModel.fromjson(doc.data()!);}
+
 }
 
   

@@ -33,7 +33,7 @@ class SignUpScreen extends StatelessWidget {
           backgroundColor: const Color(0xffEEF1F3),
           body: SingleChildScrollView(
             child: Form(
-              key: context.read<UserCubit>().signUpFormKey,
+              key: cubit.signUpFormKey,
               child: Column(
                 children: [
                   const PageHeader(),
@@ -46,7 +46,7 @@ class SignUpScreen extends StatelessWidget {
                     labelText: 'Name',
                     hintText: 'Your name',
                     isDense: true,
-                    controller: context.read<UserCubit>().signUpName,
+                    controller: cubit.signUpName,
                   ),
                   const SizedBox(height: 16),
                   //!Email
@@ -54,7 +54,7 @@ class SignUpScreen extends StatelessWidget {
                     labelText: 'Email',
                     hintText: 'Your email',
                     isDense: true,
-                    controller: context.read<UserCubit>().signUpEmail,
+                    controller: cubit.signUpEmail,
                   ),
                   const SizedBox(height: 16),
                   //! Phone Number
@@ -62,7 +62,7 @@ class SignUpScreen extends StatelessWidget {
                     labelText: 'Phone number',
                     hintText: 'Your phone number ex:01234567890',
                     isDense: true,
-                    controller: context.read<UserCubit>().signUpPhoneNumber,
+                    controller: cubit.signUpPhoneNumber,
                   ),
                   const SizedBox(height: 16),
                   //! Password
@@ -72,7 +72,7 @@ class SignUpScreen extends StatelessWidget {
                     isDense: true,
                     obscureText: true,
                     suffixIcon: true,
-                    controller: context.read<UserCubit>().signUpPassword,
+                    controller:cubit.signUpPassword,
                   ),
                   //! Confirm Password
                   CustomInputField(
@@ -81,14 +81,16 @@ class SignUpScreen extends StatelessWidget {
                     isDense: true,
                     obscureText: true,
                     suffixIcon: true,
-                    controller: context.read<UserCubit>().confirmPassword,
+                    controller:cubit.confirmPassword,
                   ),
                   const SizedBox(height: 22),
                   //!Sign Up Button
                  state is SignUpLoadingState? CircularProgressIndicator() :CustomFormButton(
                     innerText: 'Signup',
                     onPressed: () async{
-                   await   context.read<UserCubit>().signUp();
+                      await cubit.uploadImage();
+                   await 
+                     cubit.signUp();
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));
                     },
                   ),

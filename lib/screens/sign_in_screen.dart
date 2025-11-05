@@ -24,10 +24,7 @@ class SignInScreen extends StatelessWidget {
         listener: (BuildContext context, state) { 
           if (state is SignInSuccessState) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Success')));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const ProfileScreen()),
-    );
+   
   } else if (state is SignInfailureState) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
   }
@@ -49,7 +46,7 @@ class SignInScreen extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Form(
-                      key: context.read<UserCubit>().signInFormKey,
+                      key:cubit.signInFormKey,
                       child: Column(
                         children: [
                           const PageHeading(title: 'Sign-in'),
@@ -57,7 +54,7 @@ class SignInScreen extends StatelessWidget {
                           CustomInputField(
                             labelText: 'Email',
                             hintText: 'Your email',
-                            controller: context.read<UserCubit>().signInEmail,
+                            controller: cubit.signInEmail,
                           ),
                           const SizedBox(height: 16),
                           //!Password
@@ -66,12 +63,15 @@ class SignInScreen extends StatelessWidget {
                             hintText: 'Your password',
                             obscureText: true,
                             suffixIcon: true,
-                            controller: context.read<UserCubit>().signInPassword,
+                            controller:cubit.signInPassword,
                           ),
                           const SizedBox(height: 16),
                           //! Forget password?
                           ForgetPasswordWidget(size: size),
                           const SizedBox(height: 20),
+                          state is SignInLoadingState?
+                            CircularProgressIndicator():
+                          
                           //!Sign In Button
                           CustomFormButton(
                             innerText: 'Sign In',

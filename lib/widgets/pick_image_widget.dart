@@ -29,7 +29,7 @@ class PickImageWidget extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () async {
                  await  cubit.pickImage();
-                 await  cubit.uploadImage();
+                 
                   },
                   child: Container(
                     height: 50,

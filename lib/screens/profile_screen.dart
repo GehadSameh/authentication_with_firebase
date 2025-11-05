@@ -23,8 +23,9 @@ class ProfileScreen extends StatelessWidget {
             //! Profile Picture
             CircleAvatar(
               radius: 80,
-              backgroundImage: cubit.imageUrl!=null?
-               NetworkImage(cubit.imageUrl!):AssetImage("assets/images/avatar.png"),
+              backgroundImage: cubit.data?.profilePic != null 
+      ? NetworkImage(cubit.data!.profilePic)
+               :AssetImage("assets/images/avatar.png"),
               
             ),
             const SizedBox(height: 16),
