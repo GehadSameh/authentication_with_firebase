@@ -1,5 +1,6 @@
 import 'package:auth_with_firebase/cubit/user_cubit.dart';
 import 'package:auth_with_firebase/cubit/user_state.dart';
+import 'package:auth_with_firebase/screens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +14,13 @@ class ProfileScreen extends StatelessWidget {
     var cubit=context.read<UserCubit>();
     
     return BlocConsumer<UserCubit,UserState>(
-      listener: (BuildContext context, state) {  },
+      listener: (BuildContext context, state) {  
+        if(state is SignoutState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Success')));
+        }else if (state is SignOutfailureState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+        }
+      },
       builder: (BuildContext context, state) {  
       
      return Scaffold(
@@ -57,6 +64,12 @@ class ProfileScreen extends StatelessWidget {
               leading: Icon(Icons.location_city),
             ),
             const SizedBox(height: 16),
+
+          state is LoadingState?CircularProgressIndicator():  TextButton(onPressed: ()async{
+              await cubit.signOut();
+               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignUpScreen()));
+
+            }, child: Text('Sign Out'))
           ],
         ),
       );},

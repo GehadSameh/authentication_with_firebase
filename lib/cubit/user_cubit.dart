@@ -13,14 +13,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserCubit extends Cubit<UserState> {
   UserCubit() : super(UserInitial());
-  //Sign in Form key
-  GlobalKey<FormState> signInFormKey = GlobalKey();
+  
   //Sign in email
   TextEditingController signInEmail = TextEditingController();
   //Sign in password
   TextEditingController signInPassword = TextEditingController();
-  //Sign Up Form key
-  GlobalKey<FormState> signUpFormKey = GlobalKey();
+  
   //Profile Pic
   File? profilePicPath;
   //Sign up name
@@ -46,28 +44,60 @@ pickImage()async{
   }
 
 }
+void clearSignUpFields() {
+  signUpName.clear();
+  signUpPassword.clear();
+  confirmPassword.clear();
+  signUpPhoneNumber.clear();
+  signUpEmail.clear();
+  profilePicPath=null;
 
-uploadImage()async{
+  emit(UserInitial());
+}
+void clearSignInFields() {
+ 
+  signInPassword.clear();
+ 
+  signInEmail.clear();
+
+
+  emit(UserInitial());
+}
+
+
+uploadImage() async {
   emit(SignUpLoadingState());
-  try{
+  try {
     if (profilePicPath == null) {
-   
-    return;
-  }
-   const bucketName = 'store_profile_pic';
-  final String filePath = 'images/${DateTime.now().toIso8601String()}.jpg';
-  await supabase.from(bucketName).upload(filePath, profilePicPath!);
-  final publicUrl = supabase.from(bucketName).getPublicUrl(filePath);
+      return;
+    }
 
+    const bucketName = 'store_profile_pic';
+    final fileName = '${profilePicPath!.path.split('/').last}';
+    final filePath = 'images/$fileName';
+
+    // ✅ 1. Check if file already exists in Supabase storage
+    final existingFiles = await supabase.from(bucketName).list(path: 'images');
+
+    final isExist = existingFiles.any((file) => file.name == fileName);
+
+    if (isExist) {
+      // ✅ 2. If it exists → just get its public URL
+      final publicUrl = supabase.from(bucketName).getPublicUrl(filePath);
       imageUrl = publicUrl;
-
-      emit(UploadImageState(imageUrl: imageUrl!));
-          
-  }catch(e){
+      debugPrint('Image already exists. Using existing URL.');
+      emit(UploadImageState());
+    } else {
+      // ✅ 3. If it doesn't exist → upload it
+      await supabase.from(bucketName).upload(filePath, profilePicPath!);
+      final publicUrl = supabase.from(bucketName).getPublicUrl(filePath);
+      imageUrl = publicUrl;
+      debugPrint('Image uploaded successfully.');
+      emit(UploadImageState());
+    }
+  } catch (e) {
     emit(SignUpfailureState(errorMessage: e.toString()));
   }
-
-  
 }
 
   signUp( )async{
@@ -86,7 +116,7 @@ uploadImage()async{
 
       await FirebaseFirestore.instance.collection('users').doc(uid)
   .set(toMap(user));
-  userData(uid!);
+  await userData(uid!);
       emit(SignUpSucessState());
     }catch(e){
       emit(SignUpfailureState(errorMessage: e.toString()));
@@ -103,11 +133,9 @@ uploadImage()async{
     );
 
     String uid = respons.user!.uid;
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get();
-userData(uid);
+    
+ await    
+ userData(uid);
 emit(SignInSuccessState());
   
   } catch (e) {
@@ -125,7 +153,18 @@ emit(SignInSuccessState());
       data = UserModel.fromjson(doc.data()!);}
 
 }
+signOut()async{
+  emit(LoadingState());
+  try{
+    await firebase.signOut();
+    data = null;
+    emit(SignoutState());
+  }catch(e){
+    emit(SignOutfailureState(errorMessage: e.toString()));
+  }
+  
 
+}
   
 
   }

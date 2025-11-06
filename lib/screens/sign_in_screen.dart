@@ -7,13 +7,14 @@ import 'package:auth_with_firebase/widgets/dont_have_an_account.dart';
 import 'package:auth_with_firebase/widgets/forget_password_widget.dart';
 import 'package:auth_with_firebase/widgets/page_header.dart';
 import 'package:auth_with_firebase/widgets/page_heading.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({Key? key}) : super(key: key);
-
+   SignInScreen({super.key});
+ final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -46,7 +47,7 @@ class SignInScreen extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Form(
-                      key:cubit.signInFormKey,
+                      key:_formKey,
                       child: Column(
                         children: [
                           const PageHeading(title: 'Sign-in'),
@@ -54,11 +55,13 @@ class SignInScreen extends StatelessWidget {
                           CustomInputField(
                             labelText: 'Email',
                             hintText: 'Your email',
-                            controller: cubit.signInEmail,
+                            controller: cubit.signInEmail, 
+                            validate: (value)  =>value ==null? 'please enter your email':null,
                           ),
                           const SizedBox(height: 16),
                           //!Password
                           CustomInputField(
+                            validate: (value) =>value ==null? 'please enter password':null,
                             labelText: 'Password',
                             hintText: 'Your password',
                             obscureText: true,
@@ -76,14 +79,15 @@ class SignInScreen extends StatelessWidget {
                           CustomFormButton(
                             innerText: 'Sign In',
                             onPressed: () async{
+                              if(_formKey.currentState!.validate()){
                               await cubit.signIn();
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   
                                   builder: (context) =>  ProfileScreen(),
                                 ),
-                              );
+                              );}cubit.clearSignInFields();
                             },
                           ),
                           const SizedBox(height: 18),

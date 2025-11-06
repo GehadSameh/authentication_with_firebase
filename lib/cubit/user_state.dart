@@ -1,12 +1,11 @@
- class UserState {}
+
+class UserState {}
 
 final class UserInitial extends UserState {}
 final class SignUpSucessState extends UserState {}
 final class PickedImageState extends UserState{}
 final class UploadImageState extends UserState{
-  final String imageUrl;
-
-  UploadImageState({required this.imageUrl});
+  
 
 }
 
@@ -23,3 +22,10 @@ final class SignInfailureState extends UserState {
 
   SignInfailureState({required this.errorMessage});
 }
+final class  SignoutState extends UserState{}
+final class SignOutfailureState extends UserState {
+  final String errorMessage;
+
+  SignOutfailureState({required this.errorMessage});
+}
+final class LoadingState extends UserState{}

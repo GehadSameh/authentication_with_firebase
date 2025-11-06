@@ -22,7 +22,7 @@ class AlreadyHaveAnAccountWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold),
           ),
           GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen())),
+            onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignInScreen())),
             child: const Text(
               'Log-in',
               style: TextStyle(

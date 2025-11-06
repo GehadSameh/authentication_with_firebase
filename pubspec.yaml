@@ -43,6 +43,7 @@ dependencies:
   supabase_flutter: ^2.10.3
   path: ^1.9.1
   jwt_decode: ^0.3.1
+  email_validator: ^3.0.0
 
 dev_dependencies:
   flutter_test:
