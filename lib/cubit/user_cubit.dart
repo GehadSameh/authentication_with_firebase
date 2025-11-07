@@ -85,52 +85,71 @@ uploadImage() async {
       // ✅ 2. If it exists → just get its public URL
       final publicUrl = supabase.from(bucketName).getPublicUrl(filePath);
       imageUrl = publicUrl;
-      debugPrint('Image already exists. Using existing URL.');
+      
       emit(UploadImageState());
     } else {
       // ✅ 3. If it doesn't exist → upload it
       await supabase.from(bucketName).upload(filePath, profilePicPath!);
+    
+
       final publicUrl = supabase.from(bucketName).getPublicUrl(filePath);
       imageUrl = publicUrl;
-      debugPrint('Image uploaded successfully.');
+      
       emit(UploadImageState());
-    }
+    }}
+   catch (e) {
+    emit(SignUpfailureState(errorMessage: e.toString()));
+  }
+}
+
+  signUp() async {
+  emit(SignUpLoadingState());
+  UserModel user = UserModel(
+    name: signUpName.text,
+    phone: signUpPhoneNumber.text,
+    email: signUpEmail.text.trim(),
+    password: signUpPassword.text.trim(),
+    confirmPassword: confirmPassword.text,
+    profilePic: imageUrl ?? '',
+  );
+
+  try {
+    // إنشاء الحساب
+    UserCredential userCred = await firebase.createUserWithEmailAndPassword(
+      email: user.email,
+      password: user.password,
+    );
+    await userCred.user!.sendEmailVerification();
+
+    uid = userCred.user!.uid;
+
+    // حفظ بيانات المستخدم في Firestore
+    await FirebaseFirestore.instance.collection('users').doc(uid).set(toMap(user));
+    await userData(uid!);
+
+    
+   
+    emit(SignUpSucessState());
   } catch (e) {
     emit(SignUpfailureState(errorMessage: e.toString()));
   }
 }
 
-  signUp( )async{
-    emit(SignUpLoadingState());
-    UserModel user=UserModel(
-      name: signUpName.text, 
-      phone: signUpPhoneNumber.text, 
-      email: signUpEmail.text.trim(), 
-      password: signUpPassword.text.trim(),
-       confirmPassword: confirmPassword.text, 
-       profilePic:imageUrl ?? '',);
-    try{
-      // signUP
-     UserCredential userCred= await firebase.createUserWithEmailAndPassword(email: user.email, password:user.password);
-     uid = userCred.user!.uid;
-
-      await FirebaseFirestore.instance.collection('users').doc(uid)
-  .set(toMap(user));
-  await userData(uid!);
-      emit(SignUpSucessState());
-    }catch(e){
-      emit(SignUpfailureState(errorMessage: e.toString()));
-    }
-    
-  }
 
   signIn() async {
   emit(SignInLoadingState());
   try {
+     
     final respons = await firebase.signInWithEmailAndPassword(
       email: signInEmail.text.trim(),
       password: signInPassword.text.trim(),
     );
+    if (!respons.user!.emailVerified) {
+      await firebase.signOut(); // نعمل signOut عشان ما يدخلش التطبيق
+      emit(SignInfailureState(
+          errorMessage: 'Please verify your email before signing in.'));
+      return;
+    }
 
     String uid = respons.user!.uid;
     
@@ -165,7 +184,9 @@ signOut()async{
   
 
 }
-  
+  verfyEmail()async{
+
+  }
 
   }
 

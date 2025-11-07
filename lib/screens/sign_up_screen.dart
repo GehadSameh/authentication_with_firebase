@@ -1,6 +1,7 @@
 import 'package:auth_with_firebase/cubit/user_cubit.dart';
 import 'package:auth_with_firebase/cubit/user_state.dart';
 import 'package:auth_with_firebase/screens/profile_screen.dart';
+import 'package:auth_with_firebase/screens/sign_in_screen.dart';
 import 'package:auth_with_firebase/widgets/already_have_an_account_widget.dart';
 import 'package:auth_with_firebase/widgets/custom_form_button.dart';
 import 'package:auth_with_firebase/widgets/custom_input_field.dart';
@@ -8,6 +9,7 @@ import 'package:auth_with_firebase/widgets/page_header.dart';
 import 'package:auth_with_firebase/widgets/page_heading.dart';
 import 'package:auth_with_firebase/widgets/pick_image_widget.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -100,20 +102,21 @@ final _formKey = GlobalKey<FormState>();
                  state is SignUpLoadingState? CircularProgressIndicator() :CustomFormButton(
                     innerText: 'Signup',
                     onPressed: () async{
-                      if(_formKey.currentState!.validate()){
-                      await cubit.uploadImage();
-                   await 
-                     cubit.signUp();
-                      Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(builder: (context) => ProfileScreen()),
-
+                        if (_formKey.currentState!.validate()) {
+    await cubit.uploadImage();
+    await cubit.signUp();
+    cubit.clearSignUpFields();
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(content: Text("Verification email sent. Please check your inbox.")),
 );
-  cubit.clearSignUpFields();
 
-                      }
-                    },
-                  ),
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+  }
+                      
+        }),
                   const SizedBox(height: 18),
                   //! Already have an account widget
                   const AlreadyHaveAnAccountWidget(),

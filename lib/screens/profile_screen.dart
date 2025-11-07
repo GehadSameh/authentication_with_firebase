@@ -69,7 +69,12 @@ class ProfileScreen extends StatelessWidget {
               await cubit.signOut();
                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignUpScreen()));
 
-            }, child: Text('Sign Out'))
+            }, child: Row(
+              children: [
+                Icon(Icons.logout_rounded,size: 50,color: Colors.black54,),
+              Text('Sign Out',style: TextStyle(color: Colors.black54),),
+            ]), 
+            )
           ],
         ),
       );},
