@@ -44,6 +44,8 @@ dependencies:
   path: ^1.9.1
   jwt_decode: ^0.3.1
   email_validator: ^3.0.0
+  intl_phone_number_input: ^0.7.5
+  intl_phone_field: ^3.2.0
 
 dev_dependencies:
   flutter_test:
